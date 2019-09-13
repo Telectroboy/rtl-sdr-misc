@@ -53,9 +53,6 @@ for line in open(path2):
     for f,d in zip(frange(low, high, step), dbm):
         sums[f] += d*weight
         counts[f] += weight
-        print(str(count))
-        
-        
         
 ave = defaultdict(float)
 for f in sums:
@@ -68,9 +65,3 @@ for f in sorted(ave):
 # ecrit dans le fichier update.csv
     with open('update.csv', 'w') as outFile:
         outFile.write(str(ave[f]))
-
-    
-  
-    
-
-    
