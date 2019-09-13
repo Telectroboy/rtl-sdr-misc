@@ -22,8 +22,7 @@ path2 = sys.argv[2]  #fichier2
 # definition des variables sums et counts
 sums = defaultdict(float)
 counts = defaultdict(int)
-
-
+somme = 0
 def frange(start, stop, step):
     i = 0
     f = start
@@ -39,30 +38,26 @@ for line in open(path1):
     step = float(line[4])	#pas
     weight = int(line[5])	#poids?
     dbm = [float(d) for d in line[6:]]		#
-    for f,d in zip(frange(low, high, step), dbm):    #Il "zip" les infos dans f et la valeur dans d
-        sums[f] += d*weight
-        counts[f] += weight
-
-for line in open(path2):
-    line = line.strip().split(', ')     #separateur de ligne
-    low = int(line[2])   #low = frequence basse de la ligne lue colonne 2 (3 avec le 0)
-    high = int(line[3])	 #freq haute
-    step = float(line[4])	#pas
-    weight = int(line[5])	#poids?
-    dbm = [float(d) for d in line[6:]]		#comprends pas...
     for f,d in zip(frange(low, high, step), dbm):
         sums[f] += d*weight
         counts[f] += weight
+
         
 ave = defaultdict(float)
-
 for f in sums:
     ave[f] = sums[f] / counts[f]
-
+    
+c=0
 # sortie dans la console uniquement de la valeur en dBm    
 for f in sorted(ave):
-    print(str(ave[f]))
+   	somme = somme + float(ave[f])
+	print(float(ave[f]))
+	print(float(somme))
+	c += 1				#compteur du nombre de pour faire la moyenne
     
 # ecrit dans le fichier update.csv
-    with open('update.csv', 'w') as outFile:
-        outFile.write(str(ave[f]))
+    	with open('update.csv', 'w') as outFile:
+    		outFile.write(str(ave[f]))
+
+moyenne = somme / c
+print(float(moyenne))
