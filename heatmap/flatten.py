@@ -39,7 +39,7 @@ for line in open(path1):
     step = float(line[4])	#pas
     weight = int(line[5])	#poids?
     dbm = [float(d) for d in line[6:]]		#
-    for f,d in zip(frange(low, high, step), dbm):
+    for f,d in zip(frange(low, high, step), dbm):    #Il "zip" les infos dans f et la valeur dans d
         sums[f] += d*weight
         counts[f] += weight
 
@@ -49,12 +49,13 @@ for line in open(path2):
     high = int(line[3])	 #freq haute
     step = float(line[4])	#pas
     weight = int(line[5])	#poids?
-    dbm = [float(d) for d in line[6:]]		#
+    dbm = [float(d) for d in line[6:]]		#comprends pas...
     for f,d in zip(frange(low, high, step), dbm):
         sums[f] += d*weight
         counts[f] += weight
         
 ave = defaultdict(float)
+
 for f in sums:
     ave[f] = sums[f] / counts[f]
 
