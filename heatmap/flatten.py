@@ -68,7 +68,7 @@ for f in sorted(ave):
 with open('update.csv', 'w', ) as outFile:
 	write = csv.writer(outFile, delimiter=',')
 	outFile.write(str(row))
-	print(row)	
+#	print(row)	#utilise pour debug
 
 """			PLUS UTILISE!
 moyenne = somme / c
@@ -78,17 +78,17 @@ print(float(moyenne))			#affichage de la valeur moyenne
 
 rowraw = np.array(row)
 rowraw_normed= row / rowraw.min()
-# print rowraw.min() affichage de la valeur max (tout est negatif donc le max est un min)
-print(rowraw_normed)  #affichage des valeurs normalisees de 0 a 1
+# print rowraw.min()  		#affichage de la valeur max (tout est negatif donc le max est un min)
+#print(rowraw_normed)  		#affichage des valeurs normalisees de 0 a 1
 
 ################################################## SECOND FICHIER ######################################################
+a = 0
 for line in open(path2):
 	line = line.strip().split(', ')     #separateur de ligne
-#	row = line
 	low = int(line[2])   #low = frequence basse de la ligne lue colonne 2 (3 avec le 0)
 	high = int(line[3])	 #freq haute
 	step = float(line[4])	#pas
-	weight = int(line[5])	#poids?
+	weight = int(line[5])	#poids
 	dbm = [float(d) for d in line[6:]]		#
 	for f,d in zip(frange(low, high, step), dbm):
 		sums[f] += d*weight
@@ -104,8 +104,16 @@ for f in sorted(ave):
 	
 row2raw = np.array(row2)
 row2raw_normed = row2 / row2raw.min()
-print(row2raw_normed)  #affichage des valeurs normalisees de 0 a 1
+#print(row2raw_normed)  			#affichage des valeurs normalisees de 0 a 1
 
 ##################################################### DETECTION DIFFERENCE ###############################################
-
-	
+print("Comparaison")
+while a > 0:
+	a -= 1
+	val = row2raw_normed[a]
+	if val > (rowraw_normed[a] + 0.2):
+		print(val)
+		print (a*50,"kHz")
+	if val < (rowraw_normed[a] - 0.2):
+		print(val)
+		print (a*50,"kHz")
