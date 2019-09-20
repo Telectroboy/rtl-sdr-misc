@@ -15,6 +15,7 @@ import csv
 import numpy as np			#numpy pour normaliser l'array
 import os
 from collections import defaultdict
+from termcolor import colored
 
 # aide si nombre d'arguments incorrect 
 def help():
@@ -43,7 +44,7 @@ row2 = []
 compteur = 0
 
 files = os.listdir('./dataset')  		#lecture des fichiers dans dataset
-os.system('sudo rtl_power -f 0M:4M:1k -i 1s -c 0.25 -1 -g 50 "sample.csv" -D2')
+#os.system('sudo rtl_power -f 0M:4M:1k -i 10s -c 0.25 -1 -g 30 "sample.csv" -D2')
 
 def frange(start, stop, step):
     i = 0
@@ -52,6 +53,7 @@ def frange(start, stop, step):
         f = start + step*i
         yield f
         i += 1
+
 		
 ### Lecture du Sample et stockage dans array rowrawsample_normed apres normalisation
 for line in open('sample.csv'):
@@ -64,10 +66,10 @@ for line in open('sample.csv'):
 	for f,d in zip(frange(low, high, step), dbm):
 		sums[f] += d*weight
 		counts[f] += weight
-        
+			
 ave = defaultdict(float)
 for f in sums:
-    ave[f] = sums[f] / counts[f]    
+	ave[f] = sums[f] / counts[f]    
 
 for f in sorted(ave):
 	row.insert(a,float(ave[f]))
@@ -80,7 +82,8 @@ rowrawsample_normed= row / rowraw.min()
 #### LECTURE DU PREMIER FICHIER stocké dans rowraw_normed
 os.chdir('./dataset')
 for file in files:
-	print(file)
+	a = 0
+#	print(file)
 	for line in open(file):
 		line = line.strip().split(', ')     #separateur de ligne
 #		row = line
@@ -100,21 +103,25 @@ for file in files:
 
 	# sortie dans la console uniquement de la valeur en dBm    
 	for f in sorted(ave):
-		row.insert(a,float(ave[f]))
+		row2.insert(a,float(ave[f]))
 		a += 1
 
-	rowraw = np.array(row)
-	rowraw_normed = row / rowraw.min()
+	row2raw = np.array(row2)
+	row2raw_normed = row2raw / row2raw.min()
 
 ##################################################### DETECTION DIFFERENCE ###############################################
-	print("Comparaison au pas de", step, ("Hz"))
+#	print("Comparaison au pas de", step, ("Hz"))
+	compteur = 0
+	print("test de",file)
 	while a > 0:
-		a -= 1
+		a -= 1   #decrementation de a pour passer en revue tous les index de l'array
+		#print(a)
 		val = rowrawsample_normed[a]
-		if val > (rowraw_normed[a] + (float(tolerance)/100)) or val < (rowraw_normed[a] - (float(tolerance)/100)) :
-			#print(val)
-			print ("raie trouvée à", a*step,"Hz", " différence =", (val-rowraw_normed[a])*100,"%")
+		#print(val)
+		if val > (row2raw_normed[a] + (float(tolerance)/100)) or val < (row2raw_normed[a] - (float(tolerance)/100)) :
+			print ("raie trouvée à", a*step,"Hz", " différence =", (val-row2raw_normed[a])*100,"%")
 			compteur += 1
 
 	if compteur == 0:
-		print ("Aucune différence détectée")
+		print (colored("CONGRATULATIONS: IT'S A MATCH", 'green'), file)
+		
